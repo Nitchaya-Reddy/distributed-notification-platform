@@ -1,0 +1,10 @@
+
+*.iml
+*.log
+*.py[cod]
+.DS_Store
+.env
+.idea/
+.vscode/
+__pycache__/
+target/

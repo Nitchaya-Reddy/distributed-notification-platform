@@ -1,0 +1,48 @@
+openapi: 3.0.3
+info:
+  title: Distributed Notification Platform API
+  version: 1.0.0
+paths:
+  /api/v1/notifications:
+    post:
+      summary: Queue or schedule a notification
+      parameters:
+        - in: header
+          name: Idempotency-Key
+          schema: { type: string, maxLength: 120 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateNotificationRequest'
+      responses:
+        '202': { description: Accepted }
+  /api/v1/notifications/{id}:
+    get:
+      summary: Get notification status
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200': { description: Notification found }
+        '404': { description: Not found }
+components:
+  schemas:
+    CreateNotificationRequest:
+      type: object
+      required: [recipient, body, channels]
+      properties:
+        recipient: { type: string }
+        subject: { type: string }
+        body: { type: string }
+        channels:
+          type: array
+          uniqueItems: true
+          items: { type: string, enum: [EMAIL, SMS, PUSH, IN_APP] }
+        scheduledAt: { type: string, format: date-time }
+        metadata:
+          type: object
+          additionalProperties: { type: string }
